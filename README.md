@@ -2,7 +2,7 @@
 Open source standalone multi-channel recording hardware
 
 
-Subsections: [FPGA](README.md#fpga-) - [2] - [3]
+Subsections: [FPGA](README.md#fpga-) - [2] - [Other](README.md#other-)
 
 >**Note** _**`SORT: unsorted`**_
 
@@ -21,3 +21,6 @@ Subsections: [FPGA](README.md#fpga-) - [2] - [3]
 |[Digital audio workstation](https://github.com/davidebrescia/FPGA_digital_audio_workstation#readme)|A real-time audio processing workstation|[![](https://img.shields.io/github/languages/top/davidebrescia/FPGA_digital_audio_workstation?color=pink&style=flat-square)](https://github.com/davidebrescia/FPGA_digital_audio_workstation/graphs/contributors)|[![](https://flat.badgen.net/github/license/davidebrescia/FPGA_digital_audio_workstation?label=)](https://github.com/davidebrescia/FPGA_digital_audio_workstation/blob/master/LICENSE)|[![](https://flat.badgen.net/github/last-commit/davidebrescia/FPGA_digital_audio_workstation/main?label=)](https://github.com/davidebrescia/FPGA_digital_audio_workstation/graphs/code-frequency)|
 |[Digital-Audio](https://github.com/n-wagner/Digital-Audio#readme)|Digital Audio Controller|[![](https://img.shields.io/github/languages/top/n-wagner/Digital-Audio?color=pink&style=flat-square)](https://github.com/n-wagner/Digital-Audio/graphs/contributors)|[![](https://flat.badgen.net/github/license/n-wagner/Digital-Audio?label=)](https://github.com/n-wagner/Digital-Audio/blob/master/LICENSE)|[![](https://flat.badgen.net/github/last-commit/n-wagner/Digital-Audio/main?label=)](https://github.com/n-wagner/Digital-Audio/graphs/code-frequency)|
 |[Real-Time Audio Processing on Basys-3](https://github.com/wasid-malik/real-time-audio-processing#readme)|A real-time audio processing system implemented on an FPGA using digital filters|[![](https://img.shields.io/github/languages/top/wasid-malik/real-time-audio-processing?color=pink&style=flat-square)](https://github.com/wasid-malik/real-time-audio-processing/graphs/contributors)|[![](https://flat.badgen.net/github/license/wasid-malik/real-time-audio-processing?label=)](https://github.com/wasid-malik/real-time-audio-processing/blob/master/LICENSE)|[![](https://flat.badgen.net/github/last-commit/wasid-malik/real-time-audio-processing/main?label=)](https://github.com/wasid-malik/real-time-audio-processing/graphs/code-frequency)|
+
+## Other [«](README.md#--)
+[Our Hackaday.io list](https://hackaday.io/list/164050-recrack-projects)
