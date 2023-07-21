@@ -1,6 +1,10 @@
 # RecRack <img align="right" alt="WIP" src="https://user-images.githubusercontent.com/171307/210726270-adc28ba9-dada-42cf-b53e-b01d03e3dca7.png" width="4%" />
 Open source standalone multi-channel recording hardware
+
+
 Subsections: [FPGA](README.md#fpga-) - [2] - [3]
+
+>**Note** _**`SORT: unsorted`**_
 
 ## FPGA [«](README.md#--)
 |Website|Short description|Language|License|Last commit|
