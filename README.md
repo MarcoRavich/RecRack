@@ -5,8 +5,7 @@
 - 8 x 1/4" TRS balanced/unbalanced links (inputs bypass);
 - 16 x XLR balanced outputs;
 - Per-channel Gain/Padding, Ground Lift and Phantom;
-- embedded fp32 USB recording;
-- BNC WordClock synchronization;
+- fp32 USB recording of all channels;
 - Easily replaceable/upgradable opamps.
 
 
