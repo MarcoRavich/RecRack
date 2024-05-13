@@ -12,9 +12,7 @@
 - Remotely controllable via web interface.
 
 ---
-# Resources
-
-Subsections: [FPGA](README.md#fpga-) - [Other](README.md#other-)
+# Resources: [FPGA](README.md#fpga-) - [Other](README.md#other-)
 
 $\color{orange}\textsf{\Large\&#x24D8;\kern{0.1cm}\small {SORTING: Language (a>z) > License (openness) > Name / URL (a>z)}}$ 
 
