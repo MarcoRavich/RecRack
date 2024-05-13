@@ -1,13 +1,15 @@
 ## [![#RecRack](https://www.forart.it/progetti/RecRack/logo.png)](https://github.com/forart/HyMPS# "HYbrid Multimedia Production Suite") <img src="https://c.andyhoppe.com/1715320760" align="right" style="border:none" alt="Visite" />
 
+**Standalone "interposition-transparent" equipment for purest multitrack audio recordings**
+
 1U rackmount DI/Splitter/Recorder hardware unit that will implement:
 - 8 x XLR-combo balanced/unbalanced inputs;
 - 8 x 1/4" TRS balanced/unbalanced links (inputs bypass);
 - 16 x XLR balanced outputs;
 - Per-channel Gain/Padding, Ground Lift and Phantom;
-- fp32 USB recording of all channels;
-- Easily replaceable/upgradable opamps.
-
+- 32bit floating point synchronous USB channels recording;
+- Easily replaceable/upgradable opamps;
+- Remotely controllable via web interface.
 
 Subsections: [FPGA](README.md#fpga-) - [Other](README.md#other-)
 
