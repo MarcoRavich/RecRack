@@ -2,7 +2,7 @@
 
 **Standalone "interposition-transparent" equipment for purest multitrack audio recordings**
 
-1U rackmount DI/Splitter/Recorder hardware unit that will implement:
+1U rackmount unit that will implement:
 - 8 x XLR-combo balanced/unbalanced inputs;
 - 8 x 1/4" TRS balanced/unbalanced links (inputs bypass);
 - 16 x XLR balanced outputs;
