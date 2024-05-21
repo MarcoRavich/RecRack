@@ -7,7 +7,7 @@
 - [FRONT] 8 x 1/4" TRS balanced/unbalanced links (inputs clones);
 - [REAR] 16 x XLR balanced outputs;
 - External power supply;
-- Per-channel Gain/Padding, Ground Lift and Phantom;
+- Per-channel Ground Lift and Phantom;
 - 32bit floating point synchronous USB channels recording;
 - Easily replaceable/upgradable opamps;
 - Remotely controllable via standard web-interface.
