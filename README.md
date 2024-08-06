@@ -18,7 +18,7 @@
 $\color{orange}\textsf{\Large\&#x24D8;\kern{0.1cm}\small {SORTING: Language (a>z) > License (openness) > Name / URL (a>z)}}$ 
 
 ## FPGA [«](README.md#--)
-|Website|Short description|Language|License|Last commit|
+|Resource|Short description|Language|License|Last commit|
 |:-:|:-:|:-:|:-:|:-:|
 |[AudioXtreamer](https://github.com/eltortugo/audioxtreamer#readme)|A USB 2.0 32ch Audio/Midi interface for retrofitting into digital mixers/interfaces|[![](https://img.shields.io/github/languages/top/eltortugo/audioxtreamer?color=pink&style=flat-square)](https://github.com/eltortugo/audioxtreamer/graphs/contributors)|[![](https://flat.badgen.net/github/license/eltortugo/audioxtreamer?label=)](https://github.com/eltortugo/audioxtreamer/blob/master/LICENSE)|[![](https://flat.badgen.net/github/last-commit/eltortugo/audioxtreamer/master?label=)](https://github.com/eltortugo/audioxtreamer/graphs/code-frequency)|
 |[FPGA DAW](https://github.com/epritchard13/FPGA-DAW#readme)|-|[![](https://img.shields.io/github/languages/top/epritchard13/FPGA-DAW?color=pink&style=flat-square)](https://github.com/epritchard13/FPGA-DAW/graphs/contributors)|[![](https://flat.badgen.net/github/license/epritchard13/FPGA-DAW?label=)](https://github.com/epritchard13/FPGA-DAW/blob/master/LICENSE)|[![](https://flat.badgen.net/github/last-commit/epritchard13/FPGA-DAW/main?label=)](https://github.com/epritchard13/FPGA-DAW/graphs/code-frequency)|
@@ -36,4 +36,9 @@ $\color{orange}\textsf{\Large\&#x24D8;\kern{0.1cm}\small {SORTING: Language (a>z
 
 
 ## Other [«](README.md#--)
+|Resource|Short description|Language|License|Last commit|
+|:-:|:-:|:-:|:-:|:-:|
+|[insane-audio-foo](https://github.com/HubertD/insane-audio-foo#readme)|Portable Modular Digital Audio Mixer / Interface / Recorder with High Quality and stuff.|[![](https://img.shields.io/github/languages/top/HubertD/insane-audio-foo?color=pink&style=flat-square)](https://github.com/HubertD/insane-audio-foo/graphs/contributors)|[![](https://flat.badgen.net/github/license/HubertD/insane-audio-foo?label=)](https://github.com/HubertD/insane-audio-foo/blob/master/LICENSE)|[![](https://flat.badgen.net/github/last-commit/HubertD/insane-audio-foo/master?label=)](https://github.com/HubertD/insane-audio-foo/graphs/code-frequency)|
+
+
 [Our Hackaday.io list](https://hackaday.io/list/164050-recrack-projects)
