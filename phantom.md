@@ -23,9 +23,6 @@ This change eliminates the need for an internal high-voltage power supply, furth
 
 This approach makes the analog section of the RecRack completely passive and highly reliable, matching the industry-standard functionality of the MS8000. The digital recording section remains a separate add-on powered by USB.
 
-### **Next Steps**
-If you would like, I can regenerate the CAD files with the **"Phantom" buttons removed** (or renamed to "Lift") and the **DC Jack removed** (relying solely on USB-C for the digital core). Let me know if you prefer this simplified "Passive Analog + Digital Core" version.
-
 [1](https://www.fullcompass.com/common/files/28799-BehringerMS8000MicrophoneSplitterQuickStartGuide.pdf)
 [2](https://www.behringer.com/product.html?modelCode=0601-AHC)
 [3](https://community.musictribe.com/discussion/products/189/195/312659/phantom-power-ms8000)
