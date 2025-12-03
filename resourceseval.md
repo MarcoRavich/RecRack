@@ -116,14 +116,12 @@ Even with all these resources, some parts of RecRack are very specific and will 
 
 Summary
 
-* Your RecRack repository itself currently holds specification and a curated list of external projects, but no internal hardware/firmware yet to reuse.([GitHub][1])
+* RecRack repository itself currently holds specification and a curated list of external projects, but no internal hardware/firmware yet to reuse.([GitHub][1])
 * The most reusable external resources for RecRack are:
   • AudioXtreamer and ADAT USB Audio Interface for USB2 + FPGA multichannel audio and reference schematics.([GitHub][2])
   • Digital-Audio and custom-audio-interface for I²S/codec control, clocking and buffering modules.([GitHub][4])
   • insane-audio-foo for power and modular backplane hardware patterns.([GitHub][7])
   • NanoMixer and related FPGA DAW projects for the control/web UI and internal routing/metering patterns.([GitHub][1])
-
-If you tell me which architecture you want to commit to (FPGA+FX2LP, FPGA+USB-PHY, or MCU-only with USB HS), I can map one of these projects into a concrete “RecRack core” subset (which HDL files / schematics to start from and how to interface your 8-channel ADC and controls).
 
 [1]: https://github.com/MarcoRavich/RecRack "GitHub - MarcoRavich/RecRack: Standalone \"interposition-transparent\" multichannel DI/splitter/recorder unit"
 [2]: https://github.com/eltortugo/audioxtreamer "GitHub - eltortugo/audioxtreamer: ASIO driver, Usb Driver, FX2LP Firmware, VHDL Fpga, Schematics & PCB Layout for the AudioXtreamer, a USB 2.0 32ch Audio/Midi interface for retrofitting into digital mixers/interfaces."
