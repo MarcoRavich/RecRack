@@ -1,6 +1,4 @@
-Short answer: at the moment your RecRack repository itself does not yet contain schematics/PCBs/firmware to reuse, only the GPL-3.0 license and the README with a curated list of external projects.([GitHub][1])
-
-However, several of the external resources you list are quite reusable for RecRack, especially on the digital/USB/FPGA side and for the web-control part. Below is a synthesis focused on what you can concretely reuse and how it fits your RecRack goals (transparent DI/splitter + 32-bit float USB multichannel + web UI).
+Several of the external resources listed are quite reusable for RecRack, especially on the digital/USB/FPGA side and for the web-control part. Below is a synthesis focused on what you can concretely reuse and how it fits your RecRack goals (transparent DI/splitter + 32-bit float USB multichannel + web UI).
 
 Licensing note: RecRack is GPL-3.0. MIT and MPL-2.0 projects listed below are compatible and can be integrated as long as you keep their notices and comply with their terms.([GitHub][2])
 
