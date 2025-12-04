@@ -128,55 +128,55 @@ Note: For simplicity and consistency, the recommended implementation is:
 - DC-blocking and current-limiting networks on Link and driver inputs
 - Short audio paths and robust grounding strategy
 
-BLOCK DIAGRAM
+# BLOCK DIAGRAM
 
 ```mermaid
 flowchart LR
 
-    subgraph FRONT_PANEL[Front Panel]
+    subgraph FRONT_PANEL [Front Panel]
         direction TB
         CMB[Front XLR-Combo -XLR + TRS-]
+        AUTO[Internal Auto-Mode Switches<br/>-Combo sensing-]
         LNK[Front TRS Link -1:1 passive mirror-]
     end
 
-    subgraph REAR_PANEL[Rear Panel]
+    subgraph REAR_PANEL [Rear Panel]
         direction TB
         X1[Rear XLR 1 -Main-]
         X2[Rear XLR 2 -Aux-]
     end
 
-MODE{Mode Select: Mic / Inst-Line}
-
-    subgraph MIC_MODE[Microphone / Balanced XLR Mode]
+    subgraph MIC_MODE [Mic / Balanced XLR Path]
         direction LR
-        MIC_SPLIT[Passive Mic Split - Direct + Transformer Tap -]
+        MIC_SPLIT[Passive Mic Split -Direct + Transformer Tap-]
         XFM[1:1 Isolation Transformer]
     end
 
-    subgraph INST_MODE[Instrument / Line TRS Mode]
+    subgraph INST_MODE [Instrument / Line Path]
         direction LR
         HIZ[High-Z / Line Input Network]
-        BAL[Active Balancing Stage -Op-amp or Line-driver IC-]
+        BAL[Active Balancing Stage<br/>-Op-amp or Line-driver IC-]
     end
 
-    subgraph LINK_NET[Link Mirror Network]
+    subgraph LINK_NET [Link Mirror Network]
         direction TB
-        L_PROT[Passive mirror with protection -R/C/DC-block-]
+        L_PROT[Passive mirror with protection<br/>-series R, C, DC-block-]
     end
 
-    CMB --> MODE
+    CMB --> AUTO
     CMB --> LINK_NET
     LINK_NET --> LNK
 
-    MODE -->|Mic -XLR pins active-| MIC_SPLIT
+    AUTO -->|Mic -XLR used-| MIC_SPLIT
+    AUTO -->|Inst/Line -TRS used-| HIZ
+
     MIC_SPLIT -->|Direct copper| X1
     MIC_SPLIT -->|Primary feed| XFM
     XFM -->|Secondary| X2
 
-    MODE -->|Instrument / Line -TRS active-| HIZ
     HIZ --> BAL
     BAL -->|Balanced out A| X1
-    BAL -->|Balanced out B| X2  
+    BAL -->|Balanced out B| X2
 ```
 
 # WIRING CHARTS (MARKDOWN TABLES)
