@@ -531,3 +531,288 @@ This netlist captures all per-channel functional blocks:
 * Active instrument/line balancer that feeds both rear XLRs
 * Mode-dependent routing, with Link always a passive 1:1 copy of the Combo input
 
+
+# Netlist
+
+This is a generic, human-readable netlist. You can adapt reference designators and syntax to your specific EDA tool.
+
+1. Node names
+
+* CMB_XLR1           front combo XLR pin 1 (shield)
+
+* CMB_XLR2           front combo XLR pin 2 (hot)
+
+* CMB_XLR3           front combo XLR pin 3 (cold)
+
+* CMB_TRS_T          front combo TRS tip (instrument / unbalanced line)
+
+* CMB_TRS_S          front combo TRS sleeve (instrument / unbalanced ground)
+
+* LINK_T             front TRS Link tip
+
+* LINK_R             front TRS Link ring
+
+* LINK_S             front TRS Link sleeve
+
+* XLR1_PIN1          rear XLR 1 pin 1
+
+* XLR1_PIN2          rear XLR 1 pin 2
+
+* XLR1_PIN3          rear XLR 1 pin 3
+
+* XLR2_PIN1          rear XLR 2 pin 1
+
+* XLR2_PIN2          rear XLR 2 pin 2
+
+* XLR2_PIN3          rear XLR 2 pin 3
+
+* GND_AUDIO          audio ground reference
+
+* GND_CHASSIS        chassis ground reference
+
+* MIC_SPLIT_P        mic split primary hot node
+
+* MIC_SPLIT_N        mic split primary cold node
+
+* MIC_HOT_COM        common hot node after combo internal switch
+
+* MIC_COLD_COM       common cold node after combo internal switch
+
+* XFM_P1             transformer primary hot
+
+* XFM_P2             transformer primary cold
+
+* XFM_S1             transformer secondary hot
+
+* XFM_S2             transformer secondary cold
+
+* HIZ_IN             high-Z input node (to active stage)
+
+* HIZ_GND            high-Z reference (from CMB_TRS_S → GND_AUDIO)
+
+* BAL_IN             active balancer input node
+
+* BAL_OUT_A_P        active balanced output A hot
+
+* BAL_OUT_A_N        active balanced output A cold
+
+* BAL_OUT_B_P        active balanced output B hot
+
+* BAL_OUT_B_N        active balanced output B cold
+
+* VPLUS              positive low-voltage rail
+
+* VMINUS             negative low-voltage rail (if used)
+
+* VREF               mid-rail reference (if single-supply)
+
+* MODE_INST          optional logic node: TRS inserted (instrument/line)
+
+* MODE_MIC           optional logic node: XLR used (microphone)
+
+2. Connectors
+
+C1  CMB_XLR1 CMB_XLR2 CMB_XLR3 CMB_TRS_T CMB_TRS_S    type=COMBO_XLR_TRS
+
+C2  LINK_T LINK_R LINK_S                              type=TRS_LINK
+
+C3  XLR1_PIN1 XLR1_PIN2 XLR1_PIN3                     type=XLR_MALE
+
+C4  XLR2_PIN1 XLR2_PIN2 XLR2_PIN3                     type=XLR_MALE
+
+3. Grounding and chassis reference
+
+R_GND  GND_AUDIO GND_CHASSIS  value=10R               description=audio to chassis lift
+C_GND  GND_AUDIO GND_CHASSIS  value=100nF             description=RF shunt
+D_GND1 GND_AUDIO GND_CHASSIS  type=DIODE              description=optional clamp
+D_GND2 GND_CHASSIS GND_AUDIO  type=DIODE              description=optional clamp
+
+4. Link mirror network (always 1:1 copy of Combo input)
+
+4.1 Balanced mic / balanced line case (XLR section active)
+
+R_L1  CMB_XLR2 LINK_T  value=47R                      description=series protection hot
+R_L2  CMB_XLR3 LINK_R  value=47R                      description=series protection cold
+R_L3  CMB_XLR1 LINK_S  value=0R                       description=shield / ground
+
+C_L1  LINK_T GND_AUDIO value=100nF                    description=RF filter
+C_L2  LINK_R GND_AUDIO value=100nF                    description=RF filter
+
+4.2 Unbalanced instrument / line case (TRS section active)
+
+R_L4  CMB_TRS_T LINK_T value=47R                      description=series protection unbalanced
+R_L5  CMB_TRS_S LINK_S value=0R                       description=ground reference
+
+Note: only one of [CMB_XLR2/3] or [CMB_TRS_T] is actively driven at a time by virtue of the combo connector usage.
+
+5. Automatic mode selection: internal combo switches
+
+The combo connector includes internal changeover contacts operated by TRS insertion. Each leg has a normally closed (NC) and normally open (NO) path, with a common node.
+
+Mic hot leg switching
+
+W_XH1  CMB_XLR2 MIC_HOT_COM                           description=connector hot to switch common
+
+SW_HOT_NC MIC_HOT_COM MIC_SPLIT_P  state=closed_if_TRS_not_inserted
+SW_HOT_NO MIC_HOT_COM HIZ_IN       state=closed_if_TRS_inserted
+
+Mic cold leg switching
+
+W_XC1  CMB_XLR3 MIC_COLD_COM                          description=connector cold to switch common
+
+SW_COLD_NC MIC_COLD_COM MIC_SPLIT_N state=closed_if_TRS_not_inserted
+SW_COLD_NO MIC_COLD_COM MODE_INST   state=closed_if_TRS_inserted    description=optional mode sense
+
+Explanation:
+
+* No TRS plug inserted:
+
+  * SW_HOT_NC closed, SW_COLD_NC closed
+  * MIC_HOT_COM → MIC_SPLIT_P, MIC_COLD_COM → MIC_SPLIT_N
+  * Mic path is active; HIZ_IN is disconnected from the combo.
+
+* TRS plug inserted:
+
+  * SW_HOT_NC and SW_COLD_NC open
+  * SW_HOT_NO closed: MIC_HOT_COM (internally tied to TRS tip in the connector) feeds HIZ_IN
+  * Mic split and transformer are disconnected from the front connector.
+
+6. Microphone passive split and transformer path
+
+6.1 Direct path to XLR 1
+
+W_M1  CMB_XLR1 XLR1_PIN1                                description=direct shield
+W_M2  CMB_XLR2 XLR1_PIN2                                description=direct hot
+W_M3  CMB_XLR3 XLR1_PIN3                                description=direct cold
+
+6.2 Tap to transformer primary via split network
+
+R_MS1 MIC_SPLIT_P XFM_P1  value=47R                     description=series to primary hot
+R_MS2 MIC_SPLIT_N XFM_P2  value=47R                     description=series to primary cold
+
+T1    XFM_P1 XFM_P2 XFM_S1 XFM_S2                       type=AUDIO_TRANSFORMER_1_1
+
+6.3 Transformer secondary to XLR2
+
+R_XS1 XFM_S1 XFM_S2  value=10k                          description=secondary load / bleed
+C_XS1 XFM_S1 GND_AUDIO value=100pF                      description=RF shaping optional
+C_XS2 XFM_S2 GND_AUDIO value=100pF                      description=RF shaping optional
+
+W_M4  XFM_S1 XLR2_PIN2                                  description=iso hot
+W_M5  XFM_S2 XLR2_PIN3                                  description=iso cold
+
+R_X2G XLR2_PIN1 GND_AUDIO value=0R                      description=shield reference (can go to chassis)
+
+7. Instrument / line active input and balancer
+
+7.1 High-Z input
+
+R_H1  HIZ_IN BAL_IN  value=1M                           description=input impedance (if U1 non-inverting)
+R_H2  CMB_TRS_S HIZ_GND value=0R                        description=input ground to audio ground
+
+If you prefer series then high impedance, you can re-arrange R_H1/R_H2 as needed.
+
+Optional pad example
+
+R_PAD1 BAL_IN PAD_MID   value=10k                       description=pad top
+R_PAD2 PAD_MID HIZ_GND  value=2.2k                      description=pad bottom
+SW_PAD BAL_IN HIZ_IN PAD_MID type=SWITCH_3POS           description=0 / −10 / −20 dB
+
+7.2 Active balancing stage – option A (dual op-amp)
+
+Non-inverting buffer for hot leg:
+
+U1A BAL_IN VPLUS VMINUS GND_AUDIO BAL_OUT_A_P type=OPAMP_NONINV
+
+R_A1 BAL_IN U1A_NEG  value=10k                          description=feedback
+R_A2 U1A_NEG BAL_IN  value=10k                          description=gain 1
+
+Inverting buffer for cold leg:
+
+U1B BAL_OUT_A_P VPLUS VMINUS GND_AUDIO BAL_OUT_A_N type=OPAMP_INV
+
+R_B1 BAL_OUT_A_P U1B_NEG value=10k                      description=inverting input
+R_B2 U1B_NEG BAL_OUT_A_N value=10k                      description=feedback, gain −1
+
+Decoupling:
+
+C_U1P VPLUS GND_AUDIO  value=100nF                      description=local decoupling
+C_U1N VMINUS GND_AUDIO value=100nF
+C_U1BP VPLUS GND_AUDIO value=10µF                       description=bulk
+C_U1BN VMINUS GND_AUDIO value=10µF
+
+Duplicate outputs for XLR2:
+
+W_B1 BAL_OUT_A_P BAL_OUT_B_P                            description=shared hot
+W_B2 BAL_OUT_A_N BAL_OUT_B_N                            description=shared cold
+
+7.3 Active balancing stage – option B (line-driver IC, alternative)
+
+Replace U1A/U1B with:
+
+U2 BAL_IN VPLUS VMINUS GND_AUDIO BAL_OUT_A_P BAL_OUT_A_N type=BAL_LINE_DRIVER
+
+C_U2P VPLUS GND_AUDIO value=100nF                       description=decoupling
+C_U2N VMINUS GND_AUDIO value=100nF
+
+BAL_OUT_B_P/B_N again tied to BAL_OUT_A_P/A_N:
+
+W_B1 BAL_OUT_A_P BAL_OUT_B_P
+W_B2 BAL_OUT_A_N BAL_OUT_B_N
+
+8. Active outputs to rear XLRs (instrument/line mode)
+
+XLR 1
+
+R_O1P BAL_OUT_A_P XLR1_PIN2 value=47R                   description=build-out hot
+R_O1N BAL_OUT_A_N XLR1_PIN3 value=47R                   description=build-out cold
+
+R_O1G XLR1_PIN1 GND_AUDIO value=0R                      description=shield reference
+
+XLR 2
+
+R_O2P BAL_OUT_B_P XLR2_PIN2 value=47R                   description=build-out hot
+R_O2N BAL_OUT_B_N XLR2_PIN3 value=47R                   description=build-out cold
+
+(Shield XLR2 already tied by R_X2G.)
+
+9. Phantom and ESD protection (mic side and outputs)
+
+D_P1  CMB_XLR2 VPLUS  type=CLAMP_DIODE                 description=phantom transient clamp
+D_P2  CMB_XLR2 VMINUS type=CLAMP_DIODE
+D_P3  CMB_XLR3 VPLUS  type=CLAMP_DIODE
+D_P4  CMB_XLR3 VMINUS type=CLAMP_DIODE
+
+D_ESD1 CMB_XLR2 GND_CHASSIS type=ESD_DIODE              description=ESD to chassis
+D_ESD2 CMB_XLR3 GND_CHASSIS type=ESD_DIODE
+D_ESD3 LINK_T GND_CHASSIS  type=ESD_DIODE
+D_ESD4 LINK_R GND_CHASSIS  type=ESD_DIODE
+
+10. Optional logic-level sensing for mode indication
+
+TRS presence (instrument/line mode):
+
+R_MODE VPLUS MODE_INST value=100k                       description=pull-up
+SW_MODE_INST MODE_INST GND_AUDIO state=closed_if_TRS_inserted
+
+XLR presence (optional mic mode detect, if combo offers contact):
+
+R_MICDET VPLUS MODE_MIC value=100k                      description=pull-up
+SW_MODE_MIC MODE_MIC GND_AUDIO state=closed_if_XLR_inserted
+
+These logic nodes can drive LEDs, mute circuits, relay drivers, or MCU inputs, without affecting the purely analog paths.
+
+11. Supply rails (local low-voltage domain)
+
+REG1 V_IN_RAW VPLUS  GND_AUDIO type=REG_POS
+REG2 V_IN_RAW VMINUS GND_AUDIO type=REG_NEG
+
+C_IN1 V_IN_RAW GND_AUDIO value=47µF                     description=pre-reg bulk
+C_IN2 V_IN_RAW GND_AUDIO value=100nF                    description=pre-reg HF
+
+This integrated description now:
+
+* Uses the combo’s internal switching to select mic or instrument/line mode automatically.
+* Keeps the mic path fully passive and phantom-safe.
+* Keeps the Link as a constant 1:1 passive mirror of the combo input.
+* Sends either passive mic signals or active balanced line signals to both rear XLRs as requested.
