@@ -1,3 +1,105 @@
+
+# RecRack: Hybrid Active/Passive Interface Design
+
+## 1. Design Philosophy
+The RecRack utilizes a hybrid topology to maximize signal integrity and reliability. Unlike fully active units that place op-amps in every signal path, or fully passive units that lack drive capability for unbalanced sources, this design uses specific circuits for specific sources:
+
+* **Microphone Path (Passive):** The main XLR split remains fully passive. This ensures a "fail-safe" operation where the microphone input and Rear "Direct Out" are hardwired. No active electronics sit in the phantom power path, ensuring reliability matches that of standard passive splitters.
+* **Instrument Path (Active):** Unbalanced sources (TRS) utilize a dedicated active balancing stage. This provides high-impedance buffering and electronically balanced outputs, isolated from the high-voltage phantom power rails.
+
+---
+
+## 2. Channel Architecture
+The system consists of 8 identical "Universal Channels."
+
+### Physical I/O Configuration
+* **Front Panel (Per Channel):**
+    * **8 x Combo Jack (Female):** Accepts both XLR (Mic) and 1/4" TRS (Instrument/Line).
+    * **8 x 1/4" TRS "Link" Jack (Female):** Passive pass-through for stage needs.
+* **Rear Panel (Total System):**
+    * **16 x XLR Male:** Configured as 2 outputs per channel (Main & Iso/Aux).
+
+---
+
+## 3. Mode A: Microphone Operation
+In this mode, the unit functions as a high-reliability passive splitter using the XLR portion of the Combo jack.
+
+### Signal Path
+1.  **Input:** User connects microphone to the **XLR portion of the Front Combo Jack**.
+2.  **Primary Path:** The XLR input is hardwired to **Rear XLR Out 1 (Main)**. This allows the FOH console to feed phantom power (48 V) directly to the microphone without passing through active electronics.
+3.  **Secondary Path:** The signal is tapped via a 1:1 isolation transformer to feed both **Front TRS "Link" and Rear XLR Out 2 (Iso).** This creates galvanic isolation, preventing ground loops and blocking phantom power from the second mixer.
+
+### Phantom Power Behavior
+* **Main Mixer (Rear XLR 1):** Phantom passes freely to the mic.
+* **Iso Mixer (Rear XLR 2):** Phantom is blocked by the transformer; DC never reaches the mic or the Main Mixer.
+
+```mermaid
+graph LR
+    subgraph "RecRack Channel: Mic Mode"
+    MicIn(Front Combo XLR) -->|Hardwired| MainOut(Rear XLR 1\nMain/Direct)
+    MicIn -->|1:1 Transformer| IsoOut(Rear XLR 2\nIso/Aux)
+    end
+    style MicIn fill:#f9f,stroke:#333,stroke-width:2px
+    style MainOut fill:#bbf,stroke:#333,stroke-width:2px
+    style IsoOut fill:#bbf,stroke:#333,stroke-width:2px
+````
+
+-----
+
+## 4\. Mode B: Instrument/Line Operation
+
+In this mode, the unit functions as an active DI with electronic balancing using the TRS portion of the Combo jack.
+
+### Signal Path
+
+1.  **Input:** User connects instrument/line source to the **TRS portion of the Front Combo Jack**.
+2.  **Link/Thru:** The signal passes passively to the **Front "Link" Jack** for connection to a stage amplifier.
+3.  **Active Stage:** The input feeds a high-impedance buffer and a dual op-amp balancing topology (Non-inverting + Signal / Inverting - Signal).
+4.  **Output:** These drive **Rear XLR Out 2 (Aux)** and the internal ADC inputs.
+
+### Phantom Power Behavior
+
+  * The active stage is completely isolated from the passive phantom path.
+  * Capacitors and clamp diodes protect the op-amps and the instrument from accidental phantom power application at the XLR outputs.
+
+<!-- end list -->
+
+```mermaid
+graph LR
+    subgraph "RecRack Channel: Instrument Mode"
+    Inst(Front Combo TRS) -->|Passive| Link(Front Link Jack)
+    Inst -->|High-Z Buffer| OpAmp{Dual Op-Amp\nStage}
+    OpAmp -->|Active Balanced| BalOut(Rear XLR 2\nAux Output)
+    end
+    style Inst fill:#f9f,stroke:#333,stroke-width:2px
+    style Link fill:#dfd,stroke:#333,stroke-width:2px
+    style BalOut fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+-----
+
+## 5\. Technical Implementation Details
+
+### Active vs. Passive Separation
+
+To maintain the "fail-safe" requirement, op-amps are never used in series with the main mic split.
+
+  * **Mic Source:** Uses Passive XLR Path.
+  * **Unbalanced Source:** Uses Active Op-Amp Path.
+
+### Power Supply
+
+The active stage runs on a local low-voltage supply (e.g., 5 V from USB-C / 3.3 V rails), isolated from the 48 V phantom power. There is no need to design 48 V-rated active front-ends for the microphone inputs.
+
+### Isolation Strategy
+
+  * **Mic Mode:** Isolation provided by the transformer on the secondary leg (Rear XLR 2).
+  * **Instrument Mode:** Isolation provided by DC-blocking capacitors at the balanced output stage, protecting the low-voltage op-amps from external phantom power.
+
+<!-- end list -->
+
+# previous considerations
+
 The Etek MultiDI is an active DI/splitter with “electronically balanced” I/O, i.e. op-amp line drivers and receivers that can handle both balanced and unbalanced sources. Specs explicitly state “Electronically Input Balanced/Unbalanced” and “Electronically Balanced Output”.([reverb.com][1])
 
 Given the phantom-pass-through strategy you attached (passive mic path, no internal 48 V), here is what I am planning for the “unbalanced → balanced” feature in RecRack.
