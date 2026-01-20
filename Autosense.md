@@ -158,6 +158,3 @@ With that, you can:
 * Automatically inhibit phantom when MODE_INST is active.
 * Switch indicator LEDs for Mic / Inst per channel.
 * 
-
-## Resources:
-- https://www.elcircuits.com/neutrik-ncj6fi-s-combo-jack-xlr-trs-wiring/
