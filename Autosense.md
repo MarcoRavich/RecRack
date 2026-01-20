@@ -4,6 +4,7 @@
 2. [Updated block-level idea](https://github.com/MarcoRavich/RecRack/new/main#2-updated-block-level-behaviour)
 3. [Concrete way to implement it in the per-channel netlist (mechanical only)](https://github.com/MarcoRavich/RecRack/new/main#3-netlist-level-implementation-mechanical-auto-switch)
 4. [Optional logic-level sensing](https://github.com/MarcoRavich/RecRack/blob/main/Autosense.md#4-optional-logic-level-sensing)
+5. Resources
 
 ## 1) Concept and priorities
 
@@ -157,3 +158,6 @@ With that, you can:
 * Automatically inhibit phantom when MODE_INST is active.
 * Switch indicator LEDs for Mic / Inst per channel.
 * 
+
+## Resources:
+- https://www.elcircuits.com/neutrik-ncj6fi-s-combo-jack-xlr-trs-wiring/
