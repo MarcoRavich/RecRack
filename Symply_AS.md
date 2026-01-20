@@ -10,7 +10,7 @@ It also adds a connector pin mapping for the Neutrik NCJ6FI-S style combo jack, 
 
 --------------------------------------------------------------------
 
-1. Connector terminals and naming
+## 1. Connector terminals and naming
 
 1.1 NCJ6FI-S terminal meaning (XLR/TRS)
 
@@ -54,7 +54,7 @@ This is useful as a reference when checking polarity and continuity.
 
 --------------------------------------------------------------------
 
-2. Autosense behaviour (what must happen)
+## 2. Autosense behaviour (what must happen)
 
 2.1 State table
 
@@ -76,7 +76,7 @@ The wiring below is expressed as two independent changeovers:
 
 --------------------------------------------------------------------
 
-3. Wiring scheme for mechanical autosense
+## 3. Wiring scheme for mechanical autosense
 
 3.1 Nodes used
 
@@ -129,7 +129,7 @@ Chassis bonding (if present)
 
 --------------------------------------------------------------------
 
-4. Optional logic-level mode sensing (if you need a digital flag)
+## 4. Optional logic-level mode sensing (if you need a digital flag)
 
 Purpose examples
 - inhibit phantom power when 1/4" is inserted
@@ -151,7 +151,7 @@ Polarity
 
 --------------------------------------------------------------------
 
-5. Checklist (quick verification)
+## 5. Checklist (quick verification)
 
 Mechanical / connectivity
 - Verify the actual combo jack part number provides the needed switched contacts (or plan an external relay).
@@ -168,6 +168,6 @@ Polarity
 
 --------------------------------------------------------------------
 
-Sources (attached to this chat)
-- Autosense.md (original notes)
-- How to Wire the Neutrik NCJ6FI-S Combo Jack Guide (XLR_TRS)
+## Sources
+- [Autosense.md](https://github.com/MarcoRavich/RecRack/blob/main/Autosense.md)
+- [How to Wire the Neutrik NCJ6FI-S Combo Jack Guide (XLR_TRS)](https://www.elcircuits.com/neutrik-ncj6fi-s-combo-jack-xlr-trs-wiring/)
