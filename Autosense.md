@@ -3,7 +3,7 @@
 1. [Concept and priorities](https://github.com/MarcoRavich/RecRack/new/main#1-concept-and-priorities)
 2. [Updated block-level idea](https://github.com/MarcoRavich/RecRack/new/main#2-updated-block-level-behaviour)
 3. [Concrete way to implement it in the per-channel netlist (mechanical only)](https://github.com/MarcoRavich/RecRack/new/main#3-netlist-level-implementation-mechanical-auto-switch)
-4. Optional logic-level sensing
+4. [Optional logic-level sensing](https://github.com/MarcoRavich/RecRack/new/main#4-ptional-logic-level-sensing)
 
 ## 1) Concept and priorities
 
@@ -128,7 +128,7 @@ The Link mirror network defined before can stay as-is:
 
 Mechanical exclusivity of the combo ensures only one is actually driven.
 
-4. Optional logic-level sensing
+## 4. Optional logic-level sensing
 
 If you also want a logic signal to indicate the mode (for example to automatically enable/disable phantom power, or to mute/unmute the active driver), you can derive two simple logic nodes:
 
@@ -156,3 +156,7 @@ With that, you can:
 * Drive a relay that fully depowers the active balancer in mic mode (fail-safe passive).
 * Automatically inhibit phantom when MODE_INST is active.
 * Switch indicator LEDs for Mic / Inst per channel.
+* 
+
+Resources:
+- https://www.elcircuits.com/neutrik-ncj6fi-s-combo-jack-xlr-trs-wiring/
