@@ -1,35 +1,46 @@
-# Input autosensing for combo XLR/TRS (per-channel)
+# Input autosensing for combo XLR/TRS (per-channel) using Neutrik NCJ9 / NCJ10
 
 Goal
 - One front-panel combo connector per channel.
 - Default is Mic (XLR path to the mic split / transformer).
 - Inserting a 1/4" plug forces Inst/Line (high-Z input), and must isolate the mic split.
 
-This file reorganizes the original Autosense notes and adds pin tables + wiring state tables.
-It also adds a connector pin mapping for the Neutrik NCJ6FI-S style combo jack, based on the attached wiring guide PDF.
+Scope
+- This note targets Neutrik Combo I connectors with normalling contacts:
+  - NCJ9FI-* (3 switching contacts on the 1/4" jack)
+  - NCJ10FI-* (same as NCJ9, plus an additional switching ground contact on the XLR side)
+- If you use a non-switching combo (example: NCJ6FI-*), you will need an external plug-detect and an external audio changeover.
 
 --------------------------------------------------------------------
 
 ## 1. Connector terminals and naming
 
-1.1 NCJ6FI-S terminal meaning (XLR/TRS)
+### 1.1 NCJ9FI-* / NCJ10FI-* terminal meaning (XLR/TRS + normals)
 
 Notes
 - XLR uses pins 1/2/3.
-- TRS uses Tip/Ring/Sleeve (T/R/S).
-- Some NCJ6FI-S units also expose a chassis ground terminal "G" (separate from audio ground).
+- 1/4" uses Tip/Ring/Sleeve (T/R/S).
+- NCJ9/NCJ10 expose additional normalling terminals for the jack: TN, RN, SN.
+  - When no 1/4" plug is inserted: TN is connected to T, RN to R, SN to S.
+  - When a 1/4" plug is inserted: those normal circuits open.
+- XLR and TRS signal contacts are not internally tied together; any linking is something you do in your wiring.
+- NCJ10 adds a switching ground contact on the XLR side (terminals G/GN) which is controlled by XLR insertion (optional for this autosense).
 
 Terminal map (what each lug means)
 
-| Connector side | Terminal | Meaning (audio) |
+| Connector side | Terminal | Meaning (audio / function) |
 |---|---:|---|
-| XLR | 1 | Shield / ground |
+| XLR | 1 | Shield / audio ground reference |
 | XLR | 2 | Hot / positive |
 | XLR | 3 | Cold / negative |
-| 1/4" | T | Tip (positive / left) |
-| 1/4" | R | Ring (negative / right) |
-| 1/4" | S | Sleeve (ground) |
-| Chassis | G | Connector shell / chassis ground (if present) |
+| 1/4" jack | T | Tip contact (mates to plug Tip when inserted) |
+| 1/4" jack | R | Ring contact (mates to plug Ring when inserted) |
+| 1/4" jack | S | Sleeve contact (mates to plug Sleeve when inserted) |
+| 1/4" jack | TN | Tip normal (connected to T only when no plug is inserted) |
+| 1/4" jack | RN | Ring normal (connected to R only when no plug is inserted) |
+| 1/4" jack | SN | Sleeve normal (connected to S only when no plug is inserted) |
+| XLR ground switch (NCJ10 only) | G | Switched ground contact |
+| XLR ground switch (NCJ10 only) | GN | Normal side of the switched ground contact |
 
 Recommended net names for schematics / netlists
 
@@ -38,136 +49,145 @@ Recommended net names for schematics / netlists
 | CMB_XLR1 | XLR pin 1 | Audio shield / ground reference |
 | CMB_XLR2 | XLR pin 2 | Mic/balanced hot from XLR |
 | CMB_XLR3 | XLR pin 3 | Mic/balanced cold from XLR |
-| CMB_TRS_T | TRS Tip | Inst/line hot from 1/4" |
-| CMB_TRS_R | TRS Ring | Balanced line cold (if used) |
-| CMB_TRS_S | TRS Sleeve | Ground for 1/4" |
-| CMB_CHASSIS_G | Terminal G | Chassis bond point (if used) |
+| CMB_TRS_T | Jack T | 1/4" Tip (hot) |
+| CMB_TRS_R | Jack R | 1/4" Ring (cold, if used) |
+| CMB_TRS_S | Jack S | 1/4" Sleeve (return/ground) |
+| CMB_TRS_TN | Jack TN | Tip normal (NC to T) |
+| CMB_TRS_RN | Jack RN | Ring normal (NC to R) |
+| CMB_TRS_SN | Jack SN | Sleeve normal (NC to S) |
+| CMB_XLR_G | G (NCJ10 only) | XLR ground switch (switched side) |
+| CMB_XLR_GN | GN (NCJ10 only) | XLR ground switch (normal side) |
 
-1.2 Simple combined wiring (baseline reference)
+### 1.2 Simple combined wiring (baseline reference)
 
-If you want the connector to behave as a generic balanced input (no autosense/isolation), the usual correspondence is:
-- XLR 1 <-> TRS Sleeve (S)
-- XLR 2 <-> TRS Tip (T)
-- XLR 3 <-> TRS Ring (R)
+If you want the connector to behave as a generic balanced input (no autosense/isolation), you can wire externally:
+- XLR 1 -> TRS Sleeve (S)
+- XLR 2 -> TRS Tip (T)
+- XLR 3 -> TRS Ring (R)
 
-This is useful as a reference when checking polarity and continuity.
+Doing this removes the possibility of clean autosense/isolation, and is usually not compatible with phantom power + instrument inputs.
 
 --------------------------------------------------------------------
 
 ## 2. Autosense behaviour (what must happen)
 
-2.1 State table
+### 2.1 State table
 
-| Condition | Mic split (MIC_SPLIT_P/N) | High-Z input (HIZ_IN) | Notes |
+| Condition | Mic split (MIC_SPLIT_P/N) | High-Z input (HIZ_IN_P/N) | Notes |
 |---|---|---|---|
 | No 1/4" plug inserted | Connected to XLR pins 2/3 | Disconnected | Purely passive mic path |
 | 1/4" plug inserted | Disconnected (isolated) | Connected to 1/4" Tip (and optionally Ring) | No injection into mic split |
 
-2.2 Required switching element
+### 2.2 Practical implementation choice
 
-Autosense needs a mechanical changeover that is actuated by 1/4" plug insertion.
-Implementation choices (pick one):
-A) A combo jack variant that exposes switched / normalled contacts operated by 1/4" insertion.
-B) An external DPDT relay or analog switch controlled by a simple plug-detect contact.
+NCJ9/NCJ10 provide reliable plug-actuated contacts (TN/RN/SN). You can use them in two ways:
 
-The wiring below is expressed as two independent changeovers:
-- one for the hot leg
-- one for the cold leg (optional for unbalanced Inst, but useful for balanced line inputs)
+A) True isolation (recommended when you have a dedicated mic split transformer)
+- Use TN/RN to create a single selected input pair (XLR when no plug, TRS when plug).
+- Use SN as a clean plug-detect contact (MODE_INST).
+- Use an external DPDT relay or 2-channel analog switch to route the selected input pair either to MIC_SPLIT or to HIZ.
+
+B) Source selection only (only if your front-end can accept either XLR or TRS directly)
+- Use TN/RN as the “mic source” side and T/R as the “plug source” side to feed a common input pair.
+- This does not automatically disconnect a dedicated mic split transformer if the transformer is hard-wired to the common input.
+
+The rest of this document assumes A), and provides B) as an optional reference.
 
 --------------------------------------------------------------------
 
-## 3. Wiring scheme for mechanical autosense
+## 3. Wiring scheme for true isolation (external audio changeover + plug detect)
 
-3.1 Nodes used
+### 3.1 Nodes used
 
 | Node | Description |
 |---|---|
-| MIC_HOT_COM | Internal hot node after the changeover contact |
-| MIC_COLD_COM | Internal cold node after the changeover contact |
 | MIC_SPLIT_P | Mic split / transformer primary hot |
 | MIC_SPLIT_N | Mic split / transformer primary cold |
-| HIZ_IN | High impedance input hot (Inst/Line path) |
-| TRS_SENSE | Optional: node used only to detect 1/4" insertion (or to carry balanced cold) |
+| HIZ_IN_P | High impedance input hot (Inst/Line path) |
+| HIZ_IN_N | High impedance input cold (balanced line, optional) |
+| MODE_INST | Digital flag: 1 when 1/4" plug is inserted |
 
-3.2 ASCII wiring sketch (conceptual)
+### 3.2 Plug detect using SN (no audio interference)
 
-Legend
-- COM/NC/NO are the three terminals of a changeover contact.
-- NC is closed when no 1/4" plug is inserted.
-- NO is closed when a 1/4" plug is inserted.
+Wire this:
+- CMB_TRS_S goes to your audio ground (or chassis-dependent scheme).
+- MODE_INST has a pull-up to Vlogic.
+- MODE_INST is connected to CMB_TRS_SN.
 
-Hot leg changeover:
-  COM  -> MIC_HOT_COM
-  NC   -> MIC_SPLIT_P
-  NO   -> HIZ_IN
+Because SN is connected to S only when no plug is inserted, MODE_INST will be:
+- 0 (low) with no plug (SN shorted to S, which is at ground)
+- 1 (high) with plug inserted (SN opens, pull-up wins)
 
-Cold leg changeover:
-  COM  -> MIC_COLD_COM
-  NC   -> MIC_SPLIT_N
-  NO   -> TRS_SENSE   (or to HIZ_IN_COLD if you support balanced line on 1/4")
+Suggested values
+- R_MODE: 100 kOhm to Vlogic
+- Optional: C_MODE 1 nF to ground close to the MCU input (debounce / EMI)
 
-Signal sources into the COM side:
-- In Mic mode, MIC_HOT_COM/MIC_COLD_COM are driven by XLR pins 2/3.
-- In Inst/Line mode, MIC_HOT_COM is driven by TRS Tip (via the connector’s 1/4" contact set).
+### 3.3 Source selection inside the connector (TN/RN -> T/R)
 
-3.3 “Wiring table” version (netlist-friendly)
+Create a common input pair that automatically becomes:
+- XLR when no 1/4" plug is inserted
+- TRS when a 1/4" plug is inserted
 
-| Element | From | To | Active when |
-|---|---|---|---|
-| W_XH1 | CMB_XLR2 | MIC_HOT_COM | always (physical lug) |
-| W_XC1 | CMB_XLR3 | MIC_COLD_COM | always (physical lug) |
-| SW_HOT_NC | MIC_HOT_COM | MIC_SPLIT_P | 1/4" not inserted |
-| SW_COLD_NC | MIC_COLD_COM | MIC_SPLIT_N | 1/4" not inserted |
-| SW_HOT_NO | MIC_HOT_COM | HIZ_IN | 1/4" inserted |
-| SW_COLD_NO | MIC_COLD_COM | TRS_SENSE | 1/4" inserted |
+Wire this:
+- IN_P: connect to CMB_TRS_T
+- IN_N: connect to CMB_TRS_R
+- CMB_TRS_TN: connect to CMB_XLR2
+- CMB_TRS_RN: connect to CMB_XLR3
 
-Grounding reference (minimum)
-- CMB_XLR1 and CMB_TRS_S should reference the same audio ground node for signal return, unless you intentionally isolate shield.
+Result
+- No 1/4" plug: IN_P/IN_N are fed from XLR2/XLR3 via TN/RN.
+- Plug inserted: IN_P/IN_N are fed from the 1/4" plug via T/R; TN/RN open and XLR is isolated from the jack path.
 
-Chassis bonding (if present)
-- CMB_CHASSIS_G is normally bonded to chassis/earth at the panel, not to audio 0V directly (project-dependent).
+Notes
+- For TS instrument plugs, the Ring contact is typically tied to Sleeve by the plug, so IN_N will be at ground.
+
+### 3.4 Destination changeover (DPDT relay or 2-channel analog switch)
+
+Use a fail-safe changeover driven by MODE_INST:
+- Default (unpowered): IN -> mic split transformer
+- Energized (MODE_INST asserted): IN -> Hi-Z input
+
+Hot leg
+- COM: IN_P
+- NC: MIC_SPLIT_P
+- NO: HIZ_IN_P
+
+Cold leg
+- COM: IN_N
+- NC: MIC_SPLIT_N
+- NO: HIZ_IN_N
+
+Notes
+- If you only support unbalanced instruments, you can omit the cold-leg switching and tie HIZ_IN_N to ground at the Hi-Z stage.
 
 --------------------------------------------------------------------
 
-## 4. Optional logic-level mode sensing (if you need a digital flag)
+## 4. Optional: source selection only (no mic-split isolation)
 
-Purpose examples
-- inhibit phantom power when 1/4" is inserted
-- enable/disable an active line driver or balancing stage
-- drive per-channel LEDs
-
-4.1 Minimal circuit (pull-up + contact to ground)
-
-| Net | Parts | Behaviour |
-|---|---|---|
-| MODE_INST | R_MODE from Vlogic to MODE_INST, plus a switch contact from MODE_INST to GND | When 1/4" is inserted the contact closes and MODE_INST changes state |
-
-Example values
-- R_MODE: 100 kOhm (adjust to taste)
-
-Polarity
-- If the contact shorts to ground when 1/4" is inserted, MODE_INST reads low when inserted.
-- If you need active-high, invert in logic or swap pull-up/pull-down.
+If you do not need mic-split isolation, you can omit the relay/analog switch and use only section 3.3 (TN/RN -> T/R) to feed a common input pair.
 
 --------------------------------------------------------------------
 
 ## 5. Checklist (quick verification)
 
 Mechanical / connectivity
-- Verify the actual combo jack part number provides the needed switched contacts (or plan an external relay).
-- Confirm continuity for XLR pins 1/2/3 and TRS T/R/S by meter before wiring a batch.
+- Confirm the actual part number is a “normalling / switching” variant (NCJ9* or NCJ10*).
+- Confirm by meter:
+  - No plug: TN-T closed, RN-R closed, SN-S closed.
+  - Plug inserted: those pairs open.
 
 Electrical safety
-- Ensure no DC path from phantom power circuitry into the 1/4" contacts in Inst/Line mode.
-- Ensure the 1/4" path cannot back-drive the mic split transformer in Inst/Line mode (true isolation).
+- Ensure phantom power cannot reach the 1/4" path in Inst/Line mode.
+- Ensure the 1/4" path cannot back-drive the mic split transformer in Inst/Line mode (true isolation depends on section 3.4).
 
 Polarity
 - Keep a consistent convention:
-  XLR 2 = hot, XLR 3 = cold
-  TRS Tip = hot, TRS Ring = cold
+  - XLR 2 = hot, XLR 3 = cold
+  - TRS Tip = hot, TRS Ring = cold
 
 --------------------------------------------------------------------
 
 ## Sources
 - [Autosense.md](https://github.com/MarcoRavich/RecRack/blob/main/Autosense.md)
-- [How to Wire the Neutrik NCJ6FI-S Combo Jack Guide (XLR_TRS)](https://www.elcircuits.com/neutrik-ncj6fi-s-combo-jack-xlr-trs-wiring/)
+- [Neutrik Combo FAQ (switching contacts, switching ground)](https://www.neutrik.com/en/neutrik/faq/combo)
+- [Neutrik Combo Circuits (terminals: T/TN, R/RN, S/SN, G/GN)](https://www.neutrik.com/media/19415/download/BDA%20607%20V2%20-%20Combo%20I%20Circuits.pdf?v=1)
